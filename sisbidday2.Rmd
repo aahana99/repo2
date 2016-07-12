@@ -163,9 +163,26 @@ str(newgene_dat_dat)
 ```
 
 Get the gene info at https://rest.ensembl.org/documentation/info/symbol_lookup
+attach base url + example code for symbol lookup
 ```{r}
 braf_info=fromJSON("https://rest.ensembl.org//lookup/symbol/homo_sapiens/BRAF?content-type=application/json;expand=1")
 braf_info$id # this is the symbol for gene BRAF
 ```
+```{r}
+ids=c("ENSG00000157764","ENSG00000141510")
+dat=vector(2,mode="list")
+for(i in 1:2){
+base_url=
+tail_url
+url_want=paste0(base_url,ids[i],tail_url)
+dat[[i]]=fromJSON()
+print(url_want)
+Sys.sleep(2)
+}
+```
 
+July 12th : Afternoon Session(Data Cleaning Lab)
+```{r}
+
+```
 
