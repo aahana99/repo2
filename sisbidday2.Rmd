@@ -1,0 +1,101 @@
+---
+title: "SISBIDday2"
+author: "Anju Menon"
+date: "July 12, 2016"
+output: html_document
+---
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+library(devtools)
+install_github("jennybc/googlesheets")
+install.packages("googlesheets")
+library(googlesheets)
+```
+
+Reading a google sheet
+
+```{r}
+
+sheets_url = "https://docs.google.com/spreadsheets/d/18KQQd4LY5k8Ucux1MvWCsQGQJlvd0ECTnn-3ixdOKFM/pubhtml"
+aboutus = gs_url(sheets_url)
+dat = gs_read(gsurl1)
+date_acccesed=date()
+date_acccesed
+```
+Look at the result
+
+```{r lookatresult}
+dat
+```
+
+Doing the lab
+```{r}
+
+aboutus = "https://docs.google.com/spreadsheets/d/103vUoftv2dLNZ_FcAz08b5ptIkWN4W2RaFn7VF39FJ8"
+gsurl1 = gs_url(aboutus)
+dat = gs_read(gsurl1,range=cell_cols(1:2))
+date_acccesed=date()
+date_acccesed
+dat=gs_read(gsurl_about)
+mean(as.numeric(dat$'Years of R experience'),na.rm=T)
+logical_
+```
+
+Doing Json stuff now and install:
+
+```{r}
+
+
+install.packages("jsonlite")
+library(jsonlite)
+github_url = "https://api.github.com/users/jtleek/repos"
+jsonData <- fromJSON(github_url)
+dim(jsonData)
+jsonData$name
+names(jsonData)
+```
+
+Exploring Data
+```{r}
+sapply(jsonData,class)
+table(sapply(jsonData,class))
+dim(jsonData$owner) #dataframe inside a dataframe
+names(jsonData$owner)
+head(jsonData$owner)
+jsonData$owner$html_url
+```
+
+Using JSON lab
+```{r}
+github_url_wic = "https://github.com/hadley/"
+jsonData <- fromJSON(github_url_wic)
+dim(jsonData)
+jsonData$name
+names(jsonData)
+jsonData$stargazers_count
+jsonData$issue_events_url
+```
+
+Web scraping:Data harvesting and make a table from the net into a dataframe
+```{r}
+
+install.packages("rvest")
+library(rvest)
+recount_url = "http://bowtie-bio.sourceforge.net/recount/"
+htmlfile = read_html(recount_url)
+htmlfile
+
+
+nds = html_nodes(htmlfile,xpath='//*[@id="recounttab"]/table')
+dat = html_table(nds)
+dat = as.data.frame(dat)
+head(dat)
+names(dat)=dat[1,]
+dat[-1,]
+```
+
+
