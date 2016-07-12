@@ -121,3 +121,51 @@ names(content(req))
 
 ```
 
+Webscraping lab
+```{r}
+biocon_url = "https://raw.githubusercontent.com/SISBID/Module1/gh-pages/labs/bioc-software.html"
+htmlfile = read_html(biocon_url)
+htmlfile
+nds = html_nodes(htmlfile,xpath='//*[@id="biocViews_package_table"]')
+dat = html_table(nds)
+dat = as.data.frame(dat)
+head(dat)
+names(dat)=dat[1,]
+dat[-1,]
+
+#system(".phantomjs scrape-bioc.js")
+
+```
+
+Install wordcloud
+```{r}
+install.packages(c("wordcloud","tm"))
+library(wordcloud)
+#text=paste(dat[,3],collapse="")
+text=dat[,3]
+wordcloud(text,max.words=50) #use top 50 words and make a wordcloud
+
+```
+
+API lab
+```{r}
+library(jsonlite)
+oct4_dat = fromJSON("http://rest.ensembl.org//lookup/id/ENSG00000204531?content-type=application/json;expand=1")
+dim(oct4_dat)
+str(oct4_dat$Transcript)
+oct4_dat$Transcript
+#filter(oct4_dat,Transcript$id=='ENSG00000141510')
+
+
+newgene_dat_dat=fromJSON("http://rest.ensembl.org//lookup/id/ENSG00000141510?content-type=application/json;expand=1")
+str(newgene_dat_dat)
+
+```
+
+Get the gene info at https://rest.ensembl.org/documentation/info/symbol_lookup
+```{r}
+braf_info=fromJSON("https://rest.ensembl.org//lookup/symbol/homo_sapiens/BRAF?content-type=application/json;expand=1")
+braf_info$id # this is the symbol for gene BRAF
+```
+
+
