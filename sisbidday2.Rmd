@@ -98,4 +98,15 @@ names(dat)=dat[1,]
 dat[-1,]
 ```
 
+APIs
+
+
+```{r}
+install.packages("rfigshare")
+library(rfigshare)
+leeksearch = fs_search("Leek")
+length(leeksearch)
+leeksearch[[1]]
+
+```
 
