@@ -1,0 +1,125 @@
+---
+title: "SISBID Day 3 code"
+author: "Anju Menon"
+date: "July 13, 2016"
+output: html_document
+---
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+install.packages("gapminder")
+library(dplyr)
+library(gapminder)
+str(gapminder)
+gapminder
+gtbl = gapminder #assign a new variable
+glimpse(gtbl)  # better organization
+
+```
+
+```{r}
+filter(gtbl, lifeExp < 29)  # no quotes like base R
+filter(gtbl, country == "Rwanda")
+select(gtbl,country,pop,continent)
+arrange(gtbl,pop)
+arrange(gtbl,desc(pop))
+arrange(gtbl,year,lifeExp) #nested ordering 
+gtbl = mutate(gtbl,newVar = (lifeExp / gdpPercap)) # create new variable
+#gtbl = mutate(gtbl,newVar = (lifeExp / gdpPercap),newVar2=newVar*2) # create new #variable
+select(gtbl,lifeExp,gdpPercap,newVar)
+distinct(gtbl)  # to find distinct rows(exact copies) in a table(to detect errors)
+```
+
+Sampling  datasets with plyr
+```{r}
+set.seed(123545)
+sample_n(gtbl,3) # 3 rows
+sample_frac(gtbl,0.5)  # give me 50% of the dataset
+```
+
+Piping stuff
+```{r}
+#head(gtbl)
+gtbl %>% head #equivalent
+
+head(gtbl,3)
+gtbl %>% head(3)
+```
+
+Show me a random sample of the data for Asian countries with life expectancy < 65.
+```{r}
+gtbl1 = gtbl[gtbl$continent=="Asia",] # in BaseR
+gtbl2 = gtbl1[gtbl1$lifeExp < 65,]
+gtbl3 = gtbl2[sample(1:dim(gtbl2)[1],size=10),]
+gtbl3
+
+random_sample=gtbl %>% filter(continent == "Asia") %>%  # in plyr
+         filter(lifeExp < 65) %>%
+         sample_n(10)
+#with pipes and dplyr
+random_sample=gtbl %>% filter(continent %in% c("Asia","Africa")) %>%  
+         filter(lifeExp < 65) %>%
+         sample_n(10)
+
+
+
+```
+
+What is the average life expectancy by continent? Run group by
+```{r}
+mean2=function(x){meanx/2}
+gtbl %>% group_by(continent) %>% 
+      summarize(aveLife = mean(lifeExp),sdLife=sd(lifeExp)) 
+```
+
+```{r}
+gtbl %>% group_by(continent) %>% 
+      summarize(aveLife = mean(lifeExp),sdLife=sd(lifeExp),n=n()) 
+```
+
+Lab
+```{r}
+install.packages("readxl")
+library(readxl)
+dat=read_excel("1000genomes.xlsx",4,skip=1)
+dat=dat[,1:7]#read the 4th sheet(only low coverage samples)
+```
+
+Total sequence by platform
+```{r}
+dat%>% group_by(Platform) %>% summarize(total=sum(`Total Sequence`,na.rm=TRUE))
+```
+Total sequence by sequencing center
+```{r}
+dat%>% group_by(Center) %>% summarize(total=sum(`Total Sequence`,na.rm=TRUE))
+```
+
+Find the subset of samples that passed QC
+```{r}
+dat %>% filter(`Passed QC`==1)
+```
+
+Find the subset that passed QC and came from the BCM center
+```{r}
+dat %>% filter(`Passed QC`==1 & Center=='BCM')
+
+```
+
+Calculate the average aligned coverage for each population on the subset of samples that passed QC that came from the BCM.
+
+```{r}
+dat %>% filter(`Passed QC`==1 & Center=='BCM') %>%
+    group_by(Population) %>%
+  summarize(avg_align=mean(`Aligned Non Duplicated Coverage`))
+```
+
+
+
+
+
+
+
+
