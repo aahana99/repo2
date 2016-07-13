@@ -113,8 +113,44 @@ Calculate the average aligned coverage for each population on the subset of samp
 ```{r}
 dat %>% filter(`Passed QC`==1 & Center=='BCM') %>%
     group_by(Population) %>%
-  summarize(avg_align=mean(`Aligned Non Duplicated Coverage`))
+  summarize(avg_align=mean(`Aligned Non Duplicated Coverage`,na.rm=TRUE))
 ```
+
+```{r}
+#lm(`Total Sequence`~Center,data=dat)
+dat %>% lm(`Total Sequence`~Center,data=.)
+
+```
+
+Merging datasets
+```{r}
+superheroes <-
+  c("    name, alignment, gender,         publisher",
+    " Magneto,       bad,   male,            Marvel",
+    "   Storm,      good, female,            Marvel",
+    "Mystique,       bad, female,            Marvel",
+    "  Batman,      good,   male,                DC",
+    "   Joker,       bad,   male,                DC",
+    "Catwoman,       bad, female,                DC",
+    " Hellboy,      good,   male, Dark Horse Comics")
+
+superheroes <- read.csv(text = superheroes, strip.white = TRUE)
+
+
+publishers <- 
+  c("publisher, yr_founded",
+    "       DC,       1934",
+    "   Marvel,       1939",
+    "    Image,       1992")
+publishers <- read.csv(text = publishers, 
+strip.white = TRUE)
+
+ijsp = inner_join(superheroes, publishers)
+ljsp = left_join(superheroes, publishers)
+fjsp <- full_join(superheroes, publishers)
+```
+
+
 
 
 
