@@ -150,6 +150,141 @@ ljsp = left_join(superheroes, publishers)
 fjsp <- full_join(superheroes, publishers)
 ```
 
+```{r}
+install.packages("dplyr")
+install.packages("babynames")
+install.packages("pryr")
+library(dplyr)
+library(babynames)
+library(pryr)
+View(babynames)
+str(babynames)
+object_size(babynames)
+```
+
+```{r}
+View(babynames)
+str(babynames)
+object_size(babynames)
+```
+```{r}
+my_db <- src_sqlite("my_db.sqlite3", 
+create = T)
+babys_sqlite <- copy_to(my_db, 
+babynames, temporary = FALSE)
+src_tbls(my_db)
+tbl(my_db,"babynames")
+
+```
+
+```{r}
+newtbl = my_db %>% 
+tbl("babynames")%>% 
+filter(name=="Hilary") %>% 
+select(year,n,name)
+newtbl
+```
+
+use collect function
+```{r}
+newtbl = my_db %>% 
+tbl("babynames")%>% 
+filter(name=="Hilary") %>% 
+select(year,n,name)
+output = newtbl %>% collect()
+
+```
+
+Get dimension
+```{r}
+my_db %>% 
+tbl("babynames")%>% 
+filter(name=="Hilary") %>% 
+select(year,n,name)  %>%  summarize(n=n())
+
+```
+Uh HOOO
+```{r}
+popular = my_db %>%
+tbl("babynames")%>%
+  group_by(name) %>%
+  summarise(N = sum(n)) %>%
+arrange(desc(N)) %>% top_n(100)
+popular
+```
+Lets fix it
+```{r}
+popular = my_db %>%
+tbl("babynames")%>%
+  group_by(name) %>%
+  summarise(N = sum(n)) %>%
+arrange(desc(N)) %>% collect() %>% top_n(100)
+popular
+```
+```{r}
+translate_sql(filter(name=="James"))
+translate_sql(mean(x))
+
+```
+```{r}
+how_female = my_db %>% 
+tbl("babynames") %>% 
+group_by(name) %>% 
+summarize(m=mean(sex=="F"))
+how_female 
+
+```
+
+chec out show_query
+```{r}
+show_query(how_female)
+```
+
+```{r}
+install.packages("data.table")
+install.packages("readr")
+library(data.table)
+library(readr)
+library(babynames)
+```
+
+Using DT objects
+```{r}
+
+baby_dt = fread('babynames.csv')
+class(baby_dt)
+female = baby_dt[sex=="F"]
+dim(female)
+baby_dt[sex=="F",.(n,name,prop)]
+
+baby_dt[sex=="F",.(name,mean(prop))]
+baby_dt[sex=="F",
+.(name,mean(prop)),name]
+baby_dt[sex=="F",
+.(name,aveprop=mean(prop)),name]
+baby_dt[,aveprop:=mean(prop),name]
+
+baby_dt[sex=="F",.(name,mean(prop))]
+baby_dt[sex=="F",
+.(name,mean(prop)),name]
+baby_dt[sex=="F",
+.(name,aveprop=mean(prop)),name]# group by name
+
+```
+Re-assign
+```{r}
+baby_dt[,aveprop:=mean(prop),name] #automatically updates the data baby_dt
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
